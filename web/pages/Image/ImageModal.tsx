@@ -345,7 +345,7 @@ const ImageCollectionModal: Component<{}> = (props) => {
         footer={ImageNavigate}
         settings={imageSettings()}
       >
-        <section class="relative flex max-h-[calc(100%-200px)] justify-center">
+        <section class="relative flex h-full w-full items-center justify-center overflow-hidden p-4">
           <Show when={state.loading}>
             <div class="bg-900 absolute right-1/2 top-1/2 rounded-lg p-2">
               <RelativeSpinner />
