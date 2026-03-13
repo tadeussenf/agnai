@@ -287,6 +287,12 @@ const ImageCollectionModal: Component<{}> = (props) => {
         <Trash size={20} />
       </Button>
 
+      <Button size="sm" onClick={generateImage} disabled={state.loading}>
+        <Show when={state.loading} fallback={<WandSparkles size={20} />}>
+            <RelativeSpinner size={20} />
+        </Show>
+      </Button>
+
       <Button size="sm" disabled={reel.state.images.length <= 1} onClick={reel.next}>
         <ArrowRight size={20} />
       </Button>
@@ -352,7 +358,7 @@ const ImageCollectionModal: Component<{}> = (props) => {
             </div>
           </Show>
           <Show when={!!reel.state.image}>
-            <img class="min-h-0 rounded-sm object-contain" src={reel.state.image} />
+            <img class="h-full w-full rounded-sm object-contain" src={reel.state.image} />
           </Show>
         </section>
       </PromptSettings>
