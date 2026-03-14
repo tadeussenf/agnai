@@ -366,11 +366,11 @@ export const AgnaiSettings: Component<{
   const lhook = useLoras(props.setter, 'agnai.loras', props.cfg.agnai.loras)
 
   const loraList = createMemo(() => {
-    const list = lhook.loras().map((lora) => {
-      const tags = settings.loras.find((l) => l.id === lora.id)
-      if (!tags) return { ...lora, name: lora.id, tags: undefined }
-      return { ...lora, id: lora.id, name: lora.id, tags: tags.tags }
-    })
+    const list = settings.loras.map((lora) => ({
+      id: lora.id,
+      name: lora.name || lora.id,
+      tags: lora.tags,
+    }))
 
     return list
   })
@@ -401,6 +401,10 @@ export const AgnaiSettings: Component<{
       }
     )
   )
+
+  createEffect(() => {
+    settingStore.getImageLoras()
+  })
 
   return (
     <>
@@ -576,9 +580,10 @@ const LoraSelector: Component<{
   const availableLoras = createMemo(() => {
     const list = props.items
       .filter((lora) => {
-        if (!props.items.length) return lora
-        return true
+        // Here we could filter out already used loras if desired:
+        // const used = props.hook.loras().find((l) => l.id === lora.id)
         // if (used) return false
+        return true
       })
       .map((lora) => ({ label: lora.name, value: lora.id }))
 
