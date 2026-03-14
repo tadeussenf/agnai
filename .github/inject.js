@@ -11,7 +11,8 @@ const outFile = path.resolve(__dirname, '../dist/index.html')
 let content = fs
   .readFileSync(indexFile)
   .toString()
-  .replace('{{unknown}}",', process.env.GITHUB_SHA + '";')
+  .replace('{{unknown}}', process.env.GITHUB_SHA)
+  .replace('{{base_path}}', process.env.BASE_PATH || '')
 
 if (inject) {
   for (const tag of tags) {

@@ -52,8 +52,12 @@ const App: Component = () => {
   const cfg = settingStore((s) => ({ config: s.config }))
   const page = pageStore((s) => ({ flags: s.flags }))
 
+  const basePath = (window as any).agnai_base_path?.startsWith('{{')
+    ? undefined
+    : (window as any).agnai_base_path
+
   return (
-    <Router root={Layout}>
+    <Router root={Layout} base={basePath}>
       <CharacterRoutes />
       <ScenarioRoutes />
       <Route path="/discord" component={() => <Redirect external="https://discord.agnai.chat" />} />
