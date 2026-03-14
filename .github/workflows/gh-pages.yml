@@ -40,7 +40,7 @@ jobs:
 
       - name: Build frontend
         run: |
-          pnpm run build:prod
+          pnpm run build:prod -- --public-url ./
           cp dist/index.html dist/original.html
           export GITHUB_SHA=${{ github.sha }}
           node .github/inject.js
