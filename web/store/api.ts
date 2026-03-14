@@ -13,9 +13,9 @@ export function setSocketId(id: string) {
   socketId = id
 }
 
-const PROTO = location.protocol
-const HOST = location.hostname.toLowerCase()
-const PORT = location.port
+// const PROTO = location.protocol
+// const HOST = location.hostname.toLowerCase()
+// const PORT = location.port
 
 // Sometimes a user has DNS issues with a particular API url.
 // We can provide them a `?api_url=...` url to try alternate API urls
