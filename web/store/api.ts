@@ -28,7 +28,7 @@ if (location.search) {
 
 // const API_OVERRIDE = localStorage.getItem('api_url')
 
-export const baseUrl = 'https://prd-api.agnai.chat';
+export const baseUrl = 'https://prd-api.agnai.chat'
 
 export const api = {
   get,
