@@ -289,7 +289,7 @@ const ImageCollectionModal: Component<{}> = (props) => {
 
       <Button size="sm" onClick={generateImage} disabled={state.loading}>
         <Show when={state.loading} fallback={<WandSparkles size={20} />}>
-            <RelativeSpinner size={20} />
+          <RelativeSpinner size={20} />
         </Show>
       </Button>
 
