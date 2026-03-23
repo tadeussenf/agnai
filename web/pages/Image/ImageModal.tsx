@@ -1,5 +1,5 @@
 import './images.scss'
-import { Component, For, JSX, Show, createEffect, createMemo, on } from 'solid-js'
+import { Component, For, JSX, Show, createEffect, createMemo, createSignal, on } from 'solid-js'
 import Modal from '../../shared/Modal'
 import {
   ConfirmAction,
@@ -358,11 +358,85 @@ const ImageCollectionModal: Component<{}> = (props) => {
             </div>
           </Show>
           <Show when={!!reel.state.image}>
-            <img class="h-full w-full rounded-sm object-contain" src={reel.state.image} />
+            <InteractiveImage src={reel.state.image!} />
           </Show>
         </section>
       </PromptSettings>
     </Modal>
+  )
+}
+
+const InteractiveImage: Component<{ src: string }> = (props) => {
+  const [zoom, setZoom] = createSignal(false)
+  const [pos, setPos] = createSignal({ x: 50, y: 50 })
+  const [isTouch, setIsTouch] = createSignal(false)
+
+  const updatePos = (e: MouseEvent | TouchEvent) => {
+    let clientX, clientY;
+    if ('touches' in e) {
+      if (e.touches.length === 0) return;
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+      setIsTouch(true);
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    const el = e.currentTarget as HTMLElement
+    const rect = el.getBoundingClientRect()
+    // calculate mouse pos relative to image
+    const x = ((clientX - rect.left) / rect.width) * 100
+    const y = ((clientY - rect.top) / rect.height) * 100
+    setPos({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) })
+  }
+
+  return (
+    <img
+      draggable={false}
+      class="h-full w-full rounded-sm transition-transform duration-200"
+      classList={{
+        'object-contain': !zoom(),
+        'object-cover': zoom(),
+        'cursor-zoom-in': !zoom(),
+        'cursor-zoom-out': zoom(),
+      }}
+      style={
+        zoom()
+          ? {
+              transform: `scale(${isTouch() ? 2 : 1.25})`,
+              'transform-origin': `${pos().x}% ${pos().y}%`,
+            }
+          : {}
+      }
+      onMouseEnter={(e) => {
+        if (!isTouch()) {
+          setZoom(true)
+          updatePos(e)
+        }
+      }}
+      onMouseMove={(e) => {
+        if (!isTouch() && zoom()) {
+          updatePos(e)
+        }
+      }}
+      onMouseLeave={() => {
+        if (!isTouch()) setZoom(false)
+      }}
+      onTouchStart={(e) => {
+        setIsTouch(true);
+        setZoom(true);
+        updatePos(e);
+      }}
+      onTouchMove={(e) => {
+        if (zoom()) {
+          updatePos(e)
+          if (e.cancelable) e.preventDefault();
+        }
+      }}
+      onTouchEnd={() => setZoom(false)}
+      src={props.src}
+    />
   )
 }
 
