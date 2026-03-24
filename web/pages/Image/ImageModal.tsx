@@ -400,6 +400,7 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
         'object-cover': zoom(),
         'cursor-zoom-in': !zoom(),
         'cursor-zoom-out': zoom(),
+        'touch-none': zoom(),
       }}
       style={
         zoom()
