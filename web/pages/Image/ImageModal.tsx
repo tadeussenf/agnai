@@ -391,6 +391,10 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
     setPos({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) })
   }
 
+  let startX = 0;
+  let startY = 0;
+  let didMove = false;
+
   return (
     <img
       draggable={false}
@@ -426,16 +430,35 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
       }}
       onTouchStart={(e) => {
         setIsTouch(true);
-        setZoom(true);
-        updatePos(e);
+        if (e.touches.length > 0) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          didMove = false;
+          if (!zoom()) {
+            updatePos(e);
+          }
+        }
       }}
       onTouchMove={(e) => {
+        if (!isTouch()) return;
+        if (e.touches.length > 0) {
+          const dx = Math.abs(e.touches[0].clientX - startX);
+          const dy = Math.abs(e.touches[0].clientY - startY);
+          if (dx > 10 || dy > 10) {
+            didMove = true;
+          }
+        }
         if (zoom()) {
           updatePos(e)
           if (e.cancelable) e.preventDefault();
         }
       }}
-      onTouchEnd={() => setZoom(false)}
+      onTouchEnd={() => {
+        if (!isTouch()) return;
+        if (!didMove) {
+          setZoom(!zoom());
+        }
+      }}
       src={props.src}
     />
   )
