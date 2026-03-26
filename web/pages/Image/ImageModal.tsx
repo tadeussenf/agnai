@@ -371,6 +371,14 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
   const [pos, setPos] = createSignal({ x: 50, y: 50 })
   const [isTouch, setIsTouch] = createSignal(false)
 
+  createEffect(() => {
+    // Reset zoom state when a new image is loaded
+    props.src;
+    setZoom(false);
+    setPos({ x: 50, y: 50 });
+    setIsTouch(false);
+  })
+
   const updatePos = (e: MouseEvent | TouchEvent) => {
     let clientX, clientY;
     if ('touches' in e) {
