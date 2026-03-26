@@ -385,9 +385,11 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
 
     const el = e.currentTarget as HTMLElement
     const rect = el.getBoundingClientRect()
-    // calculate mouse pos relative to image
-    const x = ((clientX - rect.left) / rect.width) * 100
-    const y = ((clientY - rect.top) / rect.height) * 100
+    // calculate mouse pos relative to image and invert for flipped panning
+    const pctX = ((clientX - rect.left) / rect.width) * 100
+    const pctY = ((clientY - rect.top) / rect.height) * 100
+    const x = 100 - pctX
+    const y = 100 - pctY
     setPos({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) })
   }
 
