@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #box {
+        width: 200px;
+        height: 200px;
+        background: red;
+        transform: scale(2);
+        transform-origin: 50% 50%;
+        margin: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="box"></div>
+    <div id="out"></div>
+    <script>
+      const box = document.getElementById('box');
+      const out = document.getElementById('out');
+      box.addEventListener('mousemove', (e) => {
+        out.textContent = `offsetX: ${e.offsetX}, clientX: ${e.clientX}, bounds.left: ${box.getBoundingClientRect().left}`;
+      });
+    </script>
+  </body>
+</html>

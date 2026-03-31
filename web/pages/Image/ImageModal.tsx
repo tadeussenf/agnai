@@ -380,25 +380,36 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
   })
 
   const updatePos = (e: MouseEvent | TouchEvent) => {
-    let clientX, clientY;
+    const el = e.currentTarget as HTMLElement;
+    let pctX = 50;
+    let pctY = 50;
+
     if ('touches' in e) {
       if (e.touches.length === 0) return;
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
       setIsTouch(true);
+      const touch = e.touches[0];
+      const rect = el.getBoundingClientRect();
+      
+      const currentScale = zoom() ? 2 : 1;
+      const unscaledW = el.offsetWidth;
+      const unscaledH = el.offsetHeight;
+      
+      const currentOriginX = pos().x / 100;
+      const currentOriginY = pos().y / 100;
+      
+      const unscaledLeft = rect.left + (currentScale - 1) * currentOriginX * unscaledW;
+      const unscaledTop = rect.top + (currentScale - 1) * currentOriginY * unscaledH;
+
+      pctX = ((touch.clientX - unscaledLeft) / unscaledW) * 100;
+      pctY = ((touch.clientY - unscaledTop) / unscaledH) * 100;
     } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
+      setIsTouch(false);
+      // For mouse events, offsetX/Y is always relative to the unscaled element
+      pctX = (e.offsetX / el.offsetWidth) * 100;
+      pctY = (e.offsetY / el.offsetHeight) * 100;
     }
 
-    const el = e.currentTarget as HTMLElement
-    const rect = el.getBoundingClientRect()
-    // calculate mouse pos relative to image and invert for flipped panning
-    const pctX = ((clientX - rect.left) / rect.width) * 100
-    const pctY = ((clientY - rect.top) / rect.height) * 100
-    const x = 100 - pctX
-    const y = 100 - pctY
-    setPos({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) })
+    setPos({ x: Math.max(0, Math.min(100, pctX)), y: Math.max(0, Math.min(100, pctY)) })
   }
 
   let startX = 0;
@@ -408,10 +419,8 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
   return (
     <img
       draggable={false}
-      class="h-full w-full rounded-sm transition-transform duration-200"
+      class="h-full w-full rounded-sm transition-transform duration-200 object-contain"
       classList={{
-        'object-contain': !zoom(),
-        'object-cover': zoom(),
         'cursor-zoom-in': !zoom(),
         'cursor-zoom-out': zoom(),
         'touch-none': zoom(),
@@ -419,7 +428,7 @@ const InteractiveImage: Component<{ src: string }> = (props) => {
       style={
         zoom()
           ? {
-              transform: `scale(${isTouch() ? 2 : 1.25})`,
+              transform: `scale(${isTouch() ? 2 : 1.5})`,
               'transform-origin': `${pos().x}% ${pos().y}%`,
             }
           : {}
